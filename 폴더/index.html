@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>공장</title>
     <style>
+        @media (max-width: 768px) {
+            .ShopModalBody, .BuyModalBody {
+                width: 90%;
+                height: auto;
+            }
+        }
+
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -126,6 +133,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             width: 150px; /* 크기 조정 */
             height: 200px; /* 크기 조정 */
+            font-size: 20px;
         }
 
         .producer {
@@ -146,6 +154,11 @@
         }
 
         .production-count {
+            font-size: 14px; /* 폰트 크기 조정 */
+            margin-top: 50px;
+        }
+
+        .producer-count {
             font-size: 14px; /* 폰트 크기 조정 */
             margin-top: 10px;
         }
@@ -192,8 +205,8 @@
         <div class="ShopModalBody">
             <h2>상점</h2>
             <button class="BtnbuyProducer" id="buyProducer">생산자1 구매(1000원)</button>
-            <button class="BtnbuyProducer" id="buyProducer2">생산자2 구매(1000원)</button>
-            <button class="BtnbuyProducer" id="buyProducer3">생산자3 구매(1000원)</button>
+            <button class="BtnbuyProducer" id="buyProducer2">생산자2 구매(4000원)</button>
+            <button class="BtnbuyProducer" id="buyProducer3">생산자3 구매(80000원)</button>
             <button class="BtnsellProducer" id="sellProduction">생산품 판매</button>
             <button class="closebutton" id="btn-close-shop">닫기</button>
         </div>
@@ -206,24 +219,27 @@
         </div>
     </div>
 
-    <!-- 생산자 요소 추가 -->
     <div class="producer">
         <img src="생산자.png" alt="생산자 이미지">
         <p>생산자1</p>
         <div class="production-count" id="production-count1">생산품: 0개</div>
+        <div class="producer-count" id="producer1-count">수: 0명</div> <!-- 생산자 수 표시 -->
     </div>
-
+    
     <div class="producer2">
         <img src="생산자.png" alt="생산자 이미지">
         <p>생산자2</p>
         <div class="production-count" id="production-count2">생산품: 0개</div>
+        <div class="producer-count" id="producer2-count">수: 0명</div> <!-- 생산자 수 표시 -->
     </div>
-
+    
     <div class="producer3">
         <img src="생산자.png" alt="생산자 이미지">
         <p>생산자3</p>
         <div class="production-count" id="production-count3">생산품: 0개</div>
+        <div class="producer-count" id="producer3-count">수: 0명</div> <!-- 생산자 수 표시 -->
     </div>
+    
 
     <script>
         let money = 2000;
@@ -278,6 +294,15 @@
             }
         });
 
+        function updateProducer(producerClass, producerCount, countId) {
+            const producerDisplay = document.querySelector(producerClass);
+            const producerCountDisplay = document.getElementById(countId);
+            
+            producerDisplay.style.display = producerCount > 0 ? 'block' : 'none';
+            producerCountDisplay.textContent = `수: ${producerCount}명`;
+        }
+
+        // 버튼 클릭 이벤트에서 생산자 수 업데이트
         buyProducerButton.addEventListener("click", () => {
             const price = 1000;
             if (money >= price) {
@@ -285,78 +310,60 @@
                 moneyDisplay.textContent = money;
                 producer1Count += 1;
                 BuyModal.style.display = "flex";
-                updateProducer1(); // 생산자 업데이트
+                buyProducerButton.textContent = `생산자1 강화: ${1000 * 2 * producer1Count}원`;
+                updateProducer('.producer', producer1Count, 'producer1-count');
             } else {
                 alert('돈이 부족해요');
             }
         });
 
         buyProducer2Button.addEventListener("click", () => {
-            const price = 1000;
+            const price = 2000;
             if (money >= price) {
                 money -= price;
                 moneyDisplay.textContent = money;
                 producer2Count += 1;
                 BuyModal.style.display = "flex";
-                updateProducer2(); // 생산자 업데이트
+                buyProducer2Button.textContent = `생산자2 강화: ${4000 * 2 * producer2Count}원`;
+                updateProducer('.producer2', producer2Count, 'producer2-count');
             } else {
                 alert('돈이 부족해요');
             }
         });
 
         buyProducer3Button.addEventListener("click", () => {
-            const price = 1000;
+            const price = 4000;
             if (money >= price) {
                 money -= price;
                 moneyDisplay.textContent = money;
                 producer3Count += 1;
                 BuyModal.style.display = "flex";
-                updateProducer3(); // 생산자 업데이트
+                buyProducerButton.textContent = `생산자3 강화: ${10000 * 2 * producer3Count}원`;
+                updateProducer('.producer3', producer3Count, 'producer3-count');
             } else {
                 alert('돈이 부족해요');
             }
         });
 
-        function updateProducer1() {
-            if (producer1Count === 1) {
-                producer1Display.style.display = 'block';
-            } else {
-                producer1Display.style.display = 'none';
-            }
-        }
-
-        function updateProducer2() {
-            if (producer2Count === 1) {
-                producer2Display.style.display = 'block';
-            } else {
-                producer2Display.style.display = 'none';
-            }
-        }
-
-        function updateProducer3() {
-            if (producer3Count === 1) {
-                producer3Display.style.display = 'block';
-            } else {
-                producer3Display.style.display = 'none';
-            }
-        }
 
         function startProduction() {
             setInterval(() => {
-                if (producer1Count === 1) {
-                    production1Count += producer1Count; // 생산자 1의 수 만큼 생산
-                }
-                if (producer2Count === 1) {
-                    production2Count += producer2Count; // 생산자 2의 수 만큼 생산
-                }
-                if (producer3Count === 1) {
-                    production3Count += producer3Count; // 생산자 3의 수 만큼 생산
-                }
+                // 각 생산자마다 다른 속도를 설정합니다.
+                const productionRate1 = 1; // 생산자 1의 생산 속도
+                const productionRate2 = 4; // 생산자 2의 생산 속도
+                const productionRate3 = 8; // 생산자 3의 생산 속도
+                
+                production1Count += producer1Count * productionRate1;
+                production2Count += producer2Count * productionRate2;
+                production3Count += producer3Count * productionRate3;
+                
+                // 화면에 생산 품목 수를 업데이트합니다.
                 productionCountDisplay1.textContent = `생산품: ${production1Count}개`;
                 productionCountDisplay2.textContent = `생산품: ${production2Count}개`;
                 productionCountDisplay3.textContent = `생산품: ${production3Count}개`;
             }, 3000); // 3초마다 생산
         }
+
 
         sellProductionButton.addEventListener('click', () => {
             const sellingPricePerItem = 500; // 각 생산품의 판매 가격

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공장</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            overflow: hidden; /* 스크롤바 제거 */
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 20px;
+            height: 100vh;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .header {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .BtnOpenShop {
+            padding: 5px 30px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .BtnOpenShop:hover {
+            background-color: #0056b3;
+        }
+
+        .Moneydisplay {
+            font-size: 18px;
+            margin: 0;
+        }
+
+        .ShopModal {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .ShopModalBody {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 300px;
+            width: 90%;
+            height: 400px;
+            box-sizing: border-box;
+        }
+
+        .BtnbuyProducer {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .BtnbuyProducer:hover {
+            background-color: #0056b3;
+        }
+
+        .BtnsellProducer {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            background-color: #ff0000;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .BtnsellProducer:hover {
+            background-color: #ff0000;
+        }
+
+        .closebutton {
+            padding: 10px 20px;
+            margin-top: 10px;
+            border: 1px solid black;
+            background-color: #ffffff;
+            color: rgb(0, 0, 0);
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        /* 생산자 CSS 수정 */
+        .producer, .producer2, .producer3 {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            text-align: center;
+            background-color: #ffffff;
+            border: 2px solid #007bff;
+            border-radius: 10px;
+            padding: 10px; /* padding을 줄여서 크기 조정 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 150px; /* 크기 조정 */
+            height: 200px; /* 크기 조정 */
+        }
+
+        .producer {
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .producer2 {
+            left: calc(50% - 275px); /* 생산자 1의 왼쪽으로 위치 조정 */
+        }
+
+        .producer3 {
+            left: calc(50% + 100px); /* 생산자 1의 오른쪽으로 위치 조정 */
+        }
+
+        .producer img, .producer2 img, .producer3 img {
+            width: 60px; /* 이미지 크기 조정 */
+        }
+
+        .production-count {
+            font-size: 14px; /* 폰트 크기 조정 */
+            margin-top: 10px;
+        }
+
+        .BuyModal {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .BuyModalBody {
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* 수직 중앙 정렬 */
+            align-items: center; /* 수평 중앙 정렬 */
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 280px;
+            width: 100%;
+            height: 200px;
+            box-sizing: border-box;
+            text-align: center; /* 텍스트 중앙 정렬 */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="BtnOpenShop" id="btn-open-shop">상점</button>
+            <h2 id="Moneydisplay">현재 잔고: <span id="money">2000</span>원</h2>
+        </div>
+    </div>
+
+    <div class="ShopModal">
+        <div class="ShopModalBody">
+            <h2>상점</h2>
+            <button class="BtnbuyProducer" id="buyProducer">생산자1 구매(1000원)</button>
+            <button class="BtnbuyProducer" id="buyProducer2">생산자2 구매(1000원)</button>
+            <button class="BtnbuyProducer" id="buyProducer3">생산자3 구매(1000원)</button>
+            <button class="BtnsellProducer" id="sellProduction">생산품 판매</button>
+            <button class="closebutton" id="btn-close-shop">닫기</button>
+        </div>
+    </div>
+
+    <div class="BuyModal">
+        <div class="BuyModalBody">
+            <p>기본 생산자가 구매되었습니다</p>
+            <button class="closebutton" id="btn-close-buymodal">닫기</button>
+        </div>
+    </div>
+
+    <!-- 생산자 요소 추가 -->
+    <div class="producer">
+        <img src="생산자.png" alt="생산자 이미지">
+        <p>생산자1</p>
+        <div class="production-count" id="production-count1">생산품: 0개</div>
+    </div>
+
+    <div class="producer2">
+        <img src="생산자.png" alt="생산자 이미지">
+        <p>생산자2</p>
+        <div class="production-count" id="production-count2">생산품: 0개</div>
+    </div>
+
+    <div class="producer3">
+        <img src="생산자.png" alt="생산자 이미지">
+        <p>생산자3</p>
+        <div class="production-count" id="production-count3">생산품: 0개</div>
+    </div>
+
+    <script>
+        let money = 2000;
+        let production1Count = 0;
+        let production2Count = 0;
+        let production3Count = 0;
+        let producer1Count = 0;
+        let producer2Count = 0;
+        let producer3Count = 0;
+        const moneyDisplay = document.getElementById('money');
+        const ShopModal = document.querySelector('.ShopModal');
+        const buyProducerButton = document.getElementById('buyProducer');
+        const buyProducer2Button = document.getElementById('buyProducer2');
+        const buyProducer3Button = document.getElementById('buyProducer3');
+        const sellProductionButton = document.getElementById('sellProduction');
+        const btnOpenShop = document.getElementById('btn-open-shop');
+        const btnCloseShop = document.getElementById('btn-close-shop');
+        const productionCountDisplay1 = document.getElementById('production-count1');
+        const productionCountDisplay2 = document.getElementById('production-count2');
+        const productionCountDisplay3 = document.getElementById('production-count3');
+        const BuyModal = document.querySelector('.BuyModal');
+        const btnCloseBuymodal = document.getElementById('btn-close-buymodal');
+        const producer1Display = document.querySelector('.producer');
+        const producer2Display = document.querySelector('.producer2');
+        const producer3Display = document.querySelector('.producer3');
+
+        producer1Display.style.display = 'none';
+        producer2Display.style.display = 'none';
+        producer3Display.style.display = 'none';
+
+        btnOpenShop.addEventListener("click", () => {
+            ShopModal.style.display = "flex";
+        });
+
+        btnCloseShop.addEventListener("click", () => {
+            ShopModal.style.display = "none";
+        });
+
+        ShopModal.addEventListener("click", (event) => {
+            if (event.target === ShopModal) {
+                ShopModal.style.display = "none";
+            }
+        });
+
+        btnCloseBuymodal.addEventListener("click", () => {
+            BuyModal.style.display = "none";
+        });
+
+        BuyModal.addEventListener("click", (event) => {
+            if (event.target === BuyModal) {
+                BuyModal.style.display = "none";
+            }
+        });
+
+        buyProducerButton.addEventListener("click", () => {
+            const price = 1000;
+            if (money >= price) {
+                money -= price;
+                moneyDisplay.textContent = money;
+                producer1Count += 1;
+                BuyModal.style.display = "flex";
+                updateProducer1(); // 생산자 업데이트
+            } else {
+                alert('돈이 부족해요');
+            }
+        });
+
+        buyProducer2Button.addEventListener("click", () => {
+            const price = 1000;
+            if (money >= price) {
+                money -= price;
+                moneyDisplay.textContent = money;
+                producer2Count += 1;
+                BuyModal.style.display = "flex";
+                updateProducer2(); // 생산자 업데이트
+            } else {
+                alert('돈이 부족해요');
+            }
+        });
+
+        buyProducer3Button.addEventListener("click", () => {
+            const price = 1000;
+            if (money >= price) {
+                money -= price;
+                moneyDisplay.textContent = money;
+                producer3Count += 1;
+                BuyModal.style.display = "flex";
+                updateProducer3(); // 생산자 업데이트
+            } else {
+                alert('돈이 부족해요');
+            }
+        });
+
+        function updateProducer1() {
+            if (producer1Count === 1) {
+                producer1Display.style.display = 'block';
+            } else {
+                producer1Display.style.display = 'none';
+            }
+        }
+
+        function updateProducer2() {
+            if (producer2Count === 1) {
+                producer2Display.style.display = 'block';
+            } else {
+                producer2Display.style.display = 'none';
+            }
+        }
+
+        function updateProducer3() {
+            if (producer3Count === 1) {
+                producer3Display.style.display = 'block';
+            } else {
+                producer3Display.style.display = 'none';
+            }
+        }
+
+        function startProduction() {
+            setInterval(() => {
+                if (producer1Count === 1) {
+                    production1Count += producer1Count; // 생산자 1의 수 만큼 생산
+                }
+                if (producer2Count === 1) {
+                    production2Count += producer2Count; // 생산자 2의 수 만큼 생산
+                }
+                if (producer3Count === 1) {
+                    production3Count += producer3Count; // 생산자 3의 수 만큼 생산
+                }
+                productionCountDisplay1.textContent = `생산품: ${production1Count}개`;
+                productionCountDisplay2.textContent = `생산품: ${production2Count}개`;
+                productionCountDisplay3.textContent = `생산품: ${production3Count}개`;
+            }, 3000); // 3초마다 생산
+        }
+
+        sellProductionButton.addEventListener('click', () => {
+            const sellingPricePerItem = 500; // 각 생산품의 판매 가격
+            const totalRevenue = (production1Count + production2Count + production3Count) * sellingPricePerItem;
+            if (production1Count > 0 || production2Count > 0 || production3Count > 0) {
+                money += totalRevenue;
+                moneyDisplay.textContent = money;
+                production1Count = 0; // 판매 후 생산품 수 초기화
+                production2Count = 0;
+                production3Count = 0;
+                productionCountDisplay1.textContent = `생산품: ${production1Count}개`;
+                productionCountDisplay2.textContent = `생산품: ${production2Count}개`;
+                productionCountDisplay3.textContent = `생산품: ${production3Count}개`;
+                alert('생산품이 판매되었습니다');
+            } else {
+                alert('판매할 생산품이 없습니다');
+            }
+        });
+
+        // 페이지 로드 시 자동으로 생산 시작
+        startProduction();
+    </script>
+</body>
+</html>

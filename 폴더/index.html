@@ -36,18 +36,19 @@
             margin-bottom: 30px;
         }
 
-        .BtnOpenShop {
+        .BtnOpenShop, .BtnOpenInventory {
             padding: 5px 30px;
-            border: none;
-            background-color: #007bff;
-            color: white;
+            background-color: #ffffff;
+            color: rgb(0, 0, 0);
             cursor: pointer;
             border-radius: 5px;
+            border-color: rgb(0, 0, 0);
+            border-width: 1px;
             font-size: 16px;
         }
 
-        .BtnOpenShop:hover {
-            background-color: #0056b3;
+        .BtnOpenShop:hover, .Inventory:hover {
+            background-color: #ffffff;
         }
 
         .Moneydisplay {
@@ -55,7 +56,7 @@
             margin: 0;
         }
 
-        .ShopModal {
+        .ShopModal, .InventoryModal {
             display: none;
             justify-content: center;
             align-items: center;
@@ -68,7 +69,7 @@
             z-index: 1000;
         }
 
-        .ShopModalBody {
+        .ShopModalBody, .InventoryModalBody {
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -155,15 +156,15 @@
 
         .production-count {
             font-size: 14px; /* 폰트 크기 조정 */
-            margin-top: 50px;
+            margin-top: 40px;
         }
 
         .producer-count {
-            font-size: 14px; /* 폰트 크기 조정 */
-            margin-top: 10px;
+            font-size: 17px; /* 폰트 크기 조정 */
+            margin-top: 5px;
         }
 
-        .BuyModal {
+        .BuyModal, .SellModal {
             display: none;
             justify-content: center;
             align-items: center;
@@ -176,7 +177,7 @@
             z-index: 1000;
         }
 
-        .BuyModalBody {
+        .BuyModalBody, .SellModalBody {
             display: flex;
             flex-direction: column;
             justify-content: center; /* 수직 중앙 정렬 */
@@ -196,8 +197,19 @@
 <body>
     <div class="container">
         <div class="header">
+            <button class="BtnOpenInventory" id="btn-open-inventory">생산품 목록</button>
             <button class="BtnOpenShop" id="btn-open-shop">상점</button>
             <h2 id="Moneydisplay">현재 잔고: <span id="money">2000</span>원</h2>
+        </div>
+    </div>
+
+    <div class="InventoryModal">
+        <div class="InventoryModalBody">
+            <h2>생산품 목록</h2>
+            <p>생산품1</p>
+            <p>생산품2</p>
+            <p>생산품3</p>
+            <p>생산품4</p>
         </div>
     </div>
 
@@ -206,7 +218,7 @@
             <h2>상점</h2>
             <button class="BtnbuyProducer" id="buyProducer">생산자1 구매(1000원)</button>
             <button class="BtnbuyProducer" id="buyProducer2">생산자2 구매(4000원)</button>
-            <button class="BtnbuyProducer" id="buyProducer3">생산자3 구매(80000원)</button>
+            <button class="BtnbuyProducer" id="buyProducer3">생산자3 구매(8000원)</button>
             <button class="BtnsellProducer" id="sellProduction">생산품 판매</button>
             <button class="closebutton" id="btn-close-shop">닫기</button>
         </div>
@@ -214,30 +226,37 @@
 
     <div class="BuyModal">
         <div class="BuyModalBody">
-            <p>기본 생산자가 구매되었습니다</p>
+            <p id="buy-message">기본 생산자가 구매되었습니다</p>
             <button class="closebutton" id="btn-close-buymodal">닫기</button>
+        </div>
+    </div>
+
+    <div class="SellModal">
+        <div class="SellModalBody">
+            <p id="sell-message">생산품이 판매되었습니다</p>
+            <button class="closebutton" id="btn-close-sellmodal">닫기</button>
         </div>
     </div>
 
     <div class="producer">
         <img src="생산자.png" alt="생산자 이미지">
         <p>생산자1</p>
+        <div class="producer-count" id="producer1-count">Lv: 0</div> <!-- 생산자 수 표시 -->
         <div class="production-count" id="production-count1">생산품: 0개</div>
-        <div class="producer-count" id="producer1-count">수: 0명</div> <!-- 생산자 수 표시 -->
     </div>
     
     <div class="producer2">
         <img src="생산자.png" alt="생산자 이미지">
         <p>생산자2</p>
+        <div class="producer-count" id="producer2-count">Lv: 0</div> <!-- 생산자 수 표시 -->
         <div class="production-count" id="production-count2">생산품: 0개</div>
-        <div class="producer-count" id="producer2-count">수: 0명</div> <!-- 생산자 수 표시 -->
     </div>
     
     <div class="producer3">
         <img src="생산자.png" alt="생산자 이미지">
         <p>생산자3</p>
+        <div class="producer-count" id="producer3-count">Lv: 0</div> <!-- 생산자 수 표시 -->
         <div class="production-count" id="production-count3">생산품: 0개</div>
-        <div class="producer-count" id="producer3-count">수: 0명</div> <!-- 생산자 수 표시 -->
     </div>
     
 
@@ -251,20 +270,34 @@
         let producer3Count = 0;
         const moneyDisplay = document.getElementById('money');
         const ShopModal = document.querySelector('.ShopModal');
+        const InventoryModal = document.querySelector('.InventoryModal')
         const buyProducerButton = document.getElementById('buyProducer');
         const buyProducer2Button = document.getElementById('buyProducer2');
         const buyProducer3Button = document.getElementById('buyProducer3');
         const sellProductionButton = document.getElementById('sellProduction');
         const btnOpenShop = document.getElementById('btn-open-shop');
         const btnCloseShop = document.getElementById('btn-close-shop');
+        const BtnOpenInventory = document.getElementById('btn-open-inventory')
         const productionCountDisplay1 = document.getElementById('production-count1');
         const productionCountDisplay2 = document.getElementById('production-count2');
         const productionCountDisplay3 = document.getElementById('production-count3');
         const BuyModal = document.querySelector('.BuyModal');
+        const BuyMessage = document.getElementById('buy-message')
+        const SellModal = document.querySelector('.SellModal');
+        const SellMessage = document.getElementById('sell-message')
         const btnCloseBuymodal = document.getElementById('btn-close-buymodal');
+        const btnCloseSellmodal = document.getElementById('btn-close-sellmodal')
         const producer1Display = document.querySelector('.producer');
         const producer2Display = document.querySelector('.producer2');
         const producer3Display = document.querySelector('.producer3');
+        const productionType = {
+            0: '기본 생산품',
+            1: '고급 생산품',
+            2: '희귀 생산품',
+            3: '초희귀 생산품',
+            4: '전설 생산품'
+        };
+        const productionItems = {};
 
         producer1Display.style.display = 'none';
         producer2Display.style.display = 'none';
@@ -284,8 +317,22 @@
             }
         });
 
+        BtnOpenInventory.addEventListener("click", () => {
+            InventoryModal.style.display = "flex";
+        });
+
+        InventoryModal.addEventListener("click", (event) => {
+            if (event.target === InventoryModal) {
+                InventoryModal.style.display = "none";
+            }
+        });
+
         btnCloseBuymodal.addEventListener("click", () => {
             BuyModal.style.display = "none";
+        });
+
+        btnCloseSellmodal.addEventListener("click", () => {
+            SellModal.style.display = "none";
         });
 
         BuyModal.addEventListener("click", (event) => {
@@ -294,73 +341,128 @@
             }
         });
 
+        SellModal.addEventListener("click", (event) => {
+            if (event.target === SellModal) {
+                SellModal.style.display = "none";
+            }
+        });
+
         function updateProducer(producerClass, producerCount, countId) {
             const producerDisplay = document.querySelector(producerClass);
             const producerCountDisplay = document.getElementById(countId);
             
             producerDisplay.style.display = producerCount > 0 ? 'block' : 'none';
-            producerCountDisplay.textContent = `수: ${producerCount}명`;
+            producerCountDisplay.textContent = `Lv: ${producerCount}`;
         }
 
         // 버튼 클릭 이벤트에서 생산자 수 업데이트
         buyProducerButton.addEventListener("click", () => {
-            const price = 1000;
+            if (producer1Count >= 5) {
+                BuyModal.style.display = "flex";
+                BuyMessage.textContent = '생산자1의 레벨이 최대입니다';
+                return;
+            }
+
+            const price = 1000 + 1000 * 2 * producer1Count;
             if (money >= price) {
                 money -= price;
                 moneyDisplay.textContent = money;
                 producer1Count += 1;
+                BuyMessage.textContent = '생산자1이 구매되었습니다'
                 BuyModal.style.display = "flex";
-                buyProducerButton.textContent = `생산자1 강화: ${1000 * 2 * producer1Count}원`;
+                buyProducerButton.textContent = `생산자1 강화: ${1000 + 1000 * 2 * producer1Count}원`;
                 updateProducer('.producer', producer1Count, 'producer1-count');
             } else {
-                alert('돈이 부족해요');
+                BuyModal.style.display = "flex";
+                BuyMessage.textContent = '돈이 부족해요';
             }
         });
 
         buyProducer2Button.addEventListener("click", () => {
-            const price = 2000;
+            if (producer2Count >= 5) {
+                BuyModal.style.display = "flex";
+                BuyMessage.textContent = '생산자2의 레벨이 최대입니다';
+                return;
+            }
+            if (producer1Count <= 1) {
+                BuyModal.style.display = "flex";
+                BuyMessage.textContent = '생산자1의 레벨이 2이상이어야 구매할 수 있어요';
+                return;
+            };
+
+            const price = 2000 + 2000 * 2 * producer2Count;
             if (money >= price) {
                 money -= price;
                 moneyDisplay.textContent = money;
                 producer2Count += 1;
+                BuyMessage.textContent = '생산자2가 구매되었습니다'
                 BuyModal.style.display = "flex";
-                buyProducer2Button.textContent = `생산자2 강화: ${4000 * 2 * producer2Count}원`;
+                buyProducer2Button.textContent = `생산자2 강화: ${2000 + 2000 * 2 * producer2Count}원`;
                 updateProducer('.producer2', producer2Count, 'producer2-count');
             } else {
-                alert('돈이 부족해요');
+                BuyModal.style.display = "flex";
+                BuyMessage.textContent = '돈이 부족해요';
             }
         });
 
         buyProducer3Button.addEventListener("click", () => {
-            const price = 4000;
+            if (producer3Count >= 5) {
+                BuyModal.style.display = "flex";
+                BuyMessage.textContent = '생산자3의 레벨이 최대입니다';
+                return;
+            }
+            if (producer2Count <= 2) {
+                BuyModal.style.display = "flex";
+                BuyMessage.textContent = '생산자2의 레벨이 3이상이어야 구매할 수 있어요';
+                return;
+            };
+
+            const price = 8000 + 8000 * 2 * producer3Count;
             if (money >= price) {
                 money -= price;
                 moneyDisplay.textContent = money;
                 producer3Count += 1;
+                BuyMessage.textContent = '생산자3이 구매되었습니다'
                 BuyModal.style.display = "flex";
-                buyProducerButton.textContent = `생산자3 강화: ${10000 * 2 * producer3Count}원`;
+                buyProducerButton.textContent = `생산자3 강화: ${8000 + 8000 * 2 * producer3Count}원`;
                 updateProducer('.producer3', producer3Count, 'producer3-count');
             } else {
-                alert('돈이 부족해요');
+                BuyModal.style.display = "flex";
+                BuyMessage.textContent = '돈이 부족해요';
             }
         });
 
+        //생산품 종류 결정
+        function getProductionType(producerCount) {
+            if (producerCount === 1) return productionType[0];
+            if (producerCount === 2) return productionType[1];
+            if (producerCount === 3) return productionType[2];
+            if (producerCount === 4) return productionType[3];
+            if (producerCount === 5) return productionType[4];
+        };
 
         function startProduction() {
             setInterval(() => {
+                const type1 = getProductionType(producer1Count);
+                const type2 = getProductionType(producer2Count);
+                const type3 = getProductionType(producer3Count);
                 // 각 생산자마다 다른 속도를 설정합니다.
                 const productionRate1 = 1; // 생산자 1의 생산 속도
                 const productionRate2 = 4; // 생산자 2의 생산 속도
                 const productionRate3 = 8; // 생산자 3의 생산 속도
                 
-                production1Count += producer1Count * productionRate1;
-                production2Count += producer2Count * productionRate2;
-                production3Count += producer3Count * productionRate3;
+                production1Count += productionRate1;
+                production2Count += productionRate2 * producer2Count;
+                production3Count += productionRate3 * producer3Count;
+
+                productionItems['producer'] = type1;
+                productionItems['producer2'] = type2;
+                productionItems['producer3'] = type3;
                 
                 // 화면에 생산 품목 수를 업데이트합니다.
-                productionCountDisplay1.textContent = `생산품: ${production1Count}개`;
-                productionCountDisplay2.textContent = `생산품: ${production2Count}개`;
-                productionCountDisplay3.textContent = `생산품: ${production3Count}개`;
+                productionCountDisplay1.textContent = `${type1}: ${production1Count}개`;
+                productionCountDisplay2.textContent = `${type2}: ${production2Count}개`;
+                productionCountDisplay3.textContent = `${type3}: ${production3Count}개`;
             }, 3000); // 3초마다 생산
         }
 
@@ -377,11 +479,15 @@
                 productionCountDisplay1.textContent = `생산품: ${production1Count}개`;
                 productionCountDisplay2.textContent = `생산품: ${production2Count}개`;
                 productionCountDisplay3.textContent = `생산품: ${production3Count}개`;
-                alert('생산품이 판매되었습니다');
+                SellModal.style.display = "flex";
+                SellMessage.textContent = '생산품이 모두 판매되었습니다';
             } else {
-                alert('판매할 생산품이 없습니다');
+                SellModal.style.display = "flex";
+                SellMessage.textContent = '판매할 생산품이 없습니다';
             }
         });
+
+        
 
         // 페이지 로드 시 자동으로 생산 시작
         startProduction();
